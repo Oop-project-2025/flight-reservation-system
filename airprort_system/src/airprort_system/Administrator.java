@@ -12,7 +12,7 @@ public class Administrator extends User {
     @Override
     public void accessDashBoared(){};
 
-    // Constructor
+    
     public Administrator(String adminId, String department, List<String> permissions, String userID, String username, String email, String passwordHash, String role, int phoneNumber) {
         super(userID, username, email, passwordHash, role, phoneNumber);
         this.adminId = adminId;
@@ -20,39 +20,39 @@ public class Administrator extends User {
         this.permissions = permissions;
     }
 
-    // Methods from UML
+    
     public boolean addFlight(Flight flight) {
-        // Logic to add flight to system
+        
         System.out.println("Flight added: " + flight.getFlightNumber());
         return true;
     }
 
     public boolean removeFlight(String flightId) {
-        // Logic to remove flight by ID
+        
         System.out.println("Flight removed: " + flightId);
         return true;
     }
 
     public boolean updateFlightDetails(Flight flight) {
-        // Logic to update flight details
+        
         System.out.println("Flight updated: " + flight.getFlightNumber());
         return true;
     }
 
     public boolean manageUserAccounts(String userId, String action) {
-        // Example actions: "disable", "enable", "delete"
+        
         System.out.println("Action '" + action + "' applied to user ID: " + userId);
         return true;
     }
 
     public SystemReport generateSystemReport() {
-        // Generate a dummy report
+        
         System.out.println("System report generated.");
         return new SystemReport();
     }
 
     public boolean configureSystemSettings(Map<String, String> settings) {
-        // Apply system settings
+        
         settings.forEach((k, v) -> System.out.println("Setting " + k + " = " + v));
         return true;
     }
@@ -64,10 +64,10 @@ public class Administrator extends User {
 
     public List<SystemLog> viewSystemLogs() {
         System.out.println("System logs viewed.");
-        return List.of(); // Dummy list
+        return List.of(); 
     }
 
-    // Getters and setters
+    
     public String getAdminId() {
         return adminId;
     }
@@ -89,9 +89,9 @@ public class Administrator extends User {
     private String userId;
     private String action;
     private String description;
-    private String level; // INFO, WARNING, ERROR
+    private String level; 
 
-    // Constructor
+    
     public SystemLog(String logId, Date timestamp, String userId, String action, String description, String level) {
         this.logId = logId;
         this.timestamp = timestamp;
@@ -101,7 +101,7 @@ public class Administrator extends User {
         this.level = level;
     }
 
-    // Getters
+    
     public String getLogId() {
         return logId;
     }
@@ -126,7 +126,7 @@ public class Administrator extends User {
         return level;
     }
 
-    // To String
+    
     @Override
     public String toString() {
         return "[" + level + "] " + timestamp + " | User: " + userId + " | Action: " + action + " | " + description;
@@ -145,9 +145,9 @@ public class Administrator extends User {
     private double totalRevenue;
     private String generatedByAdminId;
 
-    // Constructor
+    
     public SystemReport() {
-        // يمكن توليد البيانات بشكل ديناميكي من قاعدة البيانات لاحقًا
+        
         this.generatedAt = new Date();
     }
 
@@ -162,7 +162,7 @@ public class Administrator extends User {
         this.generatedByAdminId = generatedByAdminId;
     }
 
-    // Getters
+    
     public String getReportId() {
         return reportId;
     }
@@ -191,7 +191,7 @@ public class Administrator extends User {
         return generatedByAdminId;
     }
 
-    // To String
+    
     @Override
     public String toString() {
         return "System Report\nGenerated At: " + generatedAt +
