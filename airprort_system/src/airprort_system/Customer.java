@@ -11,6 +11,10 @@ public class Customer extends User {
     private List<Booking> bookingHistory;
     private Map<String, String> preferences;
     private List<Payment> paymentMethods;
+
+    public Customer(String userID, String username, String email, String passwordHash, String role, int phoneNumber) {
+        super(userID, username, email, passwordHash, role, phoneNumber);
+    }
     
     @Override
     public void accessDashBoared(){};
@@ -29,9 +33,9 @@ public class Customer extends User {
         return List.of();
     }
 
-    public Booking bookFlight(Flight flight, List<Passenger> passengers) {
+    public Booking bookFlight(Flight flight, List<Passengers> passengers) {
         System.out.println("Booking flight: " + flight.getFlightNumber());
-        Booking booking = new Booking(); // You’d build a real booking
+        Booking booking = new Booking(); 
         bookingHistory.add(booking);
         return booking;
     }

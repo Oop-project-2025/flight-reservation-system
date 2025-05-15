@@ -22,7 +22,7 @@ public abstract class User {
     private int loginAttempts;
     private int phoneNumber;
 
-    public User(String userID,String username,String email,String passwordHash,String role,int phoneNumber) {
+    public User(String userID, String username, String email, String passwordHash, String role, int phoneNumber) {
         this.userID = userID;
         this.username = username;
         this.email = email;

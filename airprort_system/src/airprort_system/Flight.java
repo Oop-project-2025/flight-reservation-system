@@ -135,7 +135,7 @@ public class Flight {
         return fare.getOrDefault(seatClass.toLowerCase(), 0.0);
     }
 
-    public int checkAvailability() {
+    public int checkAvailability(String seatClass) {
         return totalSeats;
     }
     
@@ -160,13 +160,15 @@ public class Flight {
         return false;
     }
     
-    public boolean releaseSeats(int quantity) {
-        if (quantity > 0 && (totalSeats + quantity) <= totalSeats) {
-            totalSeats += quantity;
-            return true;
-        }
-        return false;
+   public boolean releaseSeats(int quantity, String seatClass) {
+    if (quantity > 0) {
+        totalSeats += quantity;  
+        return true;
     }
+    return false;
+}
+
+
 
     public void addCrewMember(String crewId) {
         if (!crewMembers.contains(crewId)) {
@@ -182,6 +184,10 @@ public class Flight {
     public String toString() {
         return flightNumber + " from " + departureAirport.getAirportCode() + 
                " to " + arrivalAirport.getAirportCode() + " (" + status + ")";
+    }
+
+    void reserveSeats(String seatClass, double size) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
     

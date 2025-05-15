@@ -1,6 +1,8 @@
 package airprort_system;
 
+import java.lang.String;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +16,8 @@ public class Agent extends User {
    @Override
     public void accessDashBoared(){};
 
-    public Agent(String agentId, String airline, double commissionRate, List<Booking> bookingsMade, int accessLevel, String userID, String username, String email, String passwordHash, String role, int phoneNumber) {
+    public Agent(String agentId, String airline, double commissionRate, List<Booking> bookingsMade,
+                 int accessLevel, java.lang.String userID, java.lang.String username, java.lang.String email, java.lang.String passwordHash, java.lang.String role, int phoneNumber) {
         super(userID, username, email, passwordHash, role, phoneNumber);
         this.agentId = agentId;
         this.airline = airline;
@@ -23,7 +26,7 @@ public class Agent extends User {
         this.accessLevel = accessLevel;
     }
     
-     public Booking createBookingForCustomer(Customer customer, Flight flight, List<Passenger> passengers) {
+     public Booking createBookingForCustomer(Customer customer, Flight flight, List<Passengers> passengers) {
         Booking booking = new Booking(/* parameters you'd define */);
         System.out.println("Booking created by agent for customer: " + customer.getUsername());
         bookingsMade.add(booking);
@@ -35,10 +38,13 @@ public class Agent extends User {
         return true;
     }
 
-    public Customer viewCustomerDetails(String customerId) {
-        System.out.println("Fetching details for customer ID: " + customerId);
-        return new Customer(); // You should load actual customer object
-    }
+    private Map<String, Customer> customerMap = new HashMap<>();
+
+public Customer viewCustomerDetails(String customerId) {
+    System.out.println("Fetching details for customer ID: " + customerId);
+    return customerMap.get(customerId);
+}
+
 
     public Report generateReport(Date startDate, Date endDate) {
         System.out.println("Generating report from " + startDate + " to " + endDate);
@@ -46,7 +52,7 @@ public class Agent extends User {
     }
 
     public boolean applyDiscount(Booking booking, double discountAmount) {
-        System.out.println("Applied discount of " + discountAmount + " to booking: " + booking.getBookingId());
+        System.out.println("Applied discount of " + discountAmount + " to booking: " + booking.getBookingID());
         return true;
     }
 

@@ -3,12 +3,13 @@ package airprort_system;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Booking {
     private String bookingID;
     private Customer customer;
     private Flight flight;
-    private List<Passenger> passenger;
+    private List<Passengers> passenger;
     private Date bookingDate;
     private List<String> seatNumbers;
     private String seatClass;
@@ -18,7 +19,7 @@ public class Booking {
     private List<String> specialRequests;
     private Map<String, Double> fare;
 
-    public Booking(String bookingID, Customer customer, Flight flight, List<Passenger> passenger, Date bookingDate, List<String> seatNumbers, String seatClass, double totalPrice, String paymentStatus, String bookingStatus, List<String> specialRequests) {
+    public Booking(String bookingID, Customer customer, Flight flight, List<Passengers> passenger, Date bookingDate, List<String> seatNumbers, String seatClass, double totalPrice, String paymentStatus, String bookingStatus, List<String> specialRequests) {
         this.bookingID = bookingID;
         this.customer = customer;
         this.flight = flight;
@@ -30,6 +31,10 @@ public class Booking {
         this.paymentStatus = paymentStatus;
         this.bookingStatus = bookingStatus;
         this.specialRequests = specialRequests;
+    }
+
+    Booking() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     public String getBookingID() {
@@ -56,11 +61,11 @@ public class Booking {
         this.flight = flight;
     }
 
-    public List<Passenger> getPassenger() {
+    public List<Passengers> getPassenger() {
         return passenger;
     }
 
-    public void setPassenger(List<Passenger> passenger) {
+    public void setPassenger(List<Passengers> passenger) {
         this.passenger = passenger;
     }
 
@@ -121,7 +126,7 @@ public class Booking {
     }
     
     public double calculateTotal(){
-     return totalPrice = passengers.size() * getFareForClass(seatClass);
+     return totalPrice = getFareForClass() * Passengers.size();
     }
 
     public double getFareForClass(String seatClass) {
@@ -133,47 +138,63 @@ public class Booking {
     }
     
     public boolean confirmBooking() {
-    if (flight.checkAvailability(seatClass) >= passengers.size()) {
+    if (flight.checkAvailability(seatClass) >= Passengers.size()) {
         bookingStatus = "confirmed";
         paymentStatus = "paid";
-        flight.reserveSeats(seatClass, passengers.size());
+        flight.reserveSeats(seatClass, Passengers.size());
         return true;
     }
     bookingStatus = "waitlisted";
     return false;
 }
     
-    public boolean cancelBooking() {
-    if (!bookingStatus.equals("cancelled")) {
+     public boolean cancelBooking() {
+    if (!bookingStatus.equalsIgnoreCase("cancelled")) {
         bookingStatus = "cancelled";
         paymentStatus = "refunded";
-        flight.releaseSeats(seatClass, passengers.size());
+        flight.releaseSeats((int) Passengers.size(), seatClass);
+
         return true;
     }
     return false;
 }
+
+     
     public Ticket generateTicket() {
     Ticket ticket = new Ticket();
     ticket.setBooking(this);
-    for (int i = 0; i < passengers.size(); i++) {
-        ticket.setPassenger(passengers.get(i));
+    for (int i = 0; i < Passengers.size(); i++) {
+        ticket.setPassenger(Passengers.get(i));
         ticket.setSeatNumber(seatNumbers.get(i));
         
     }
     return ticket;
 }
-    public boolean addPassenger(Passenger passenger) {
-    passengers.add(passenger);
+    public boolean addPassenger(Passengers passenger) {
+    Passengers.add(passenger);
     return true;
 }
     public boolean removePassenger(String passengerId) {
-    return passengers.removeIf(p -> p.getPassengerId().equals(passengerId));
+    for (int i = 0; i < Passengers.size(); i++) {
+        if (Passengers.get(i).getPassengerId().equals(passengerId)) {
+            Passengers.remove(i);
+            return true;
+        }
+    }
+    return false;
 }
+
+
+
     
     public boolean updatePaymentStatus(String status) {
     this.paymentStatus = status;
     return true;
 }
+
+    private double getFareForClass() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
     }
 
