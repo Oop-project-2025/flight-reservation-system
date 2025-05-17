@@ -94,8 +94,44 @@ public class Ticket {
         this.barcode = barcode;
     }
     
-    public void generateBarcode() {
-        this.barcode = "BARCODE-" + ticketID.substring(0, 8);
-        System.out.println("Barcode generated: " + barcode);
+     public void generateBarcode() {
+        this.barcode = "BC" + ticketID.hashCode() + System.currentTimeMillis();
+
+}
+     public boolean validateTicket() {
+        return ticketStatus.equalsIgnoreCase("Confirmed") && barcode != null;
     }
+    public boolean cancelTicket() {
+        if (!ticketStatus.equalsIgnoreCase("Cancelled")) {
+            this.ticketStatus = "Cancelled";
+            return true;
+        }
+        return false;
+    }
+
+    public boolean sendToEmail(String email) {
+        if (email.contains("@")) {
+            System.out.println("Sending ticket to " + email + "...");
+            return true;
+        }
+        return false;
+    }
+
+    public boolean printTicket() {
+        if (validateTicket()) {
+            System.out.println("========== TICKET ==========");
+            System.out.println("Ticket ID: " + ticketID);
+            System.out.println("Passenger: " + passenger.getFirstName()+passenger.getLastName());
+            System.out.println("Flight: " + booking.getFlight().getFlightID());
+            System.out.println("Seat: " + seatNumber);
+            System.out.println("Boarding Time: " + boardingTime);
+            System.out.println("Gate: " + gateNumber);
+            System.out.println("Status: " + ticketStatus);
+            System.out.println("Barcode: " + barcode);
+            System.out.println("============================");
+            return true;
+        }
+        return false;
+    }
+
 }

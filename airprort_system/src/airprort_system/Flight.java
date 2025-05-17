@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class Flight {
     
-    String flihtID;
+    String flightID;
     String flightNumber;
     Airport departureAirport;
     Airport arrivalAirport;
@@ -25,7 +25,7 @@ public class Flight {
             String airCraftType, int totalSeats, Map<String, Double> fare
             , String status, List<String> crewMembers) {
         
-        this.flihtID = flihtID;
+        this.flightID = flihtID;
         this.flightNumber = flightNumber;
         this.departureAirport = departureAirport;
         this.arrivalAirport = arrivalAirport;
@@ -38,12 +38,12 @@ public class Flight {
         this.crewMembers = crewMembers;
     }
 
-    public String getFlihtID() {
-        return flihtID;
+    public String getFlightID() {
+        return flightID;
     }
 
     public void setFlihtID(String flihtID) {
-        this.flihtID = flihtID;
+        this.flightID = flihtID;
     }
 
     public String getFlightNumber() {

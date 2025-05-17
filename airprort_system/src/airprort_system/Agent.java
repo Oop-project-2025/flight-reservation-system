@@ -5,6 +5,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 
 public class Agent extends User {
     private String agentId;
@@ -12,9 +16,12 @@ public class Agent extends User {
     private double commissionRate;
     private List<Booking> bookingsMade;
     private int accessLevel;
+
     
    @Override
-    public void accessDashBoared(){};
+    public void accessDashBoared() {
+        System.out.println("Agent Dashboard Accessed");
+    }
 
     public Agent(String agentId, String airline, double commissionRate, List<Booking> bookingsMade,
                  int accessLevel, java.lang.String userID, java.lang.String username, java.lang.String email, java.lang.String passwordHash, java.lang.String role, int phoneNumber) {
@@ -26,16 +33,23 @@ public class Agent extends User {
         this.accessLevel = accessLevel;
     }
     
-     public Booking createBookingForCustomer(Customer customer, Flight flight, List<Passengers> passengers) {
-        Booking booking = new Booking(/* parameters you'd define */);
+      public Booking createBookingForCustomer(Customer customer, Flight flight, List<Passengers> passengers) {
+        if (customer == null || flight == null || passengers == null || passengers.isEmpty()) {
+            System.out.println("Error: Invalid booking parameters.");
+            return null;
+        }
+        Booking booking = new Booking();
         System.out.println("Booking created by agent for customer: " + customer.getUsername());
         bookingsMade.add(booking);
         return booking;
     }
-
-    public boolean modifyCustomerBooking(String bookingId, Map<String, String> changes) {
-        System.out.println("Modified booking: " + bookingId + " with changes: " + changes);
-        return true;
+    public Report generateBookingReport(Date startDate, Date endDate) {
+        if (startDate == null || endDate == null || endDate.before(startDate)) {
+            System.out.println("Error: Invalid date range for report.");
+            return null; 
+        }
+        System.out.println("Generated booking report from " + startDate + " to " + endDate);
+        return new Report();
     }
 
     private Map<String, Customer> customerMap = new HashMap<>();
@@ -51,12 +65,20 @@ public Customer viewCustomerDetails(String customerId) {
         return new Report();
     }
 
-    public boolean applyDiscount(Booking booking, double discountAmount) {
+   public boolean applyDiscount(Booking booking, double discountAmount) {
+        if (booking == null || discountAmount <= 0) {
+            System.out.println("Error: Invalid booking or discount amount.");
+            return false;
+        }
         System.out.println("Applied discount of " + discountAmount + " to booking: " + booking.getBookingID());
         return true;
     }
 
-    public boolean blockCustomer(Customer customer, String reason) {
+     public boolean blockCustomer(Customer customer, String reason) {
+        if (customer == null || reason == null || reason.isEmpty()) {
+            System.out.println("Error: Invalid customer or reason.");
+            return false;
+        }
         System.out.println("Customer " + customer.getUsername() + " blocked. Reason: " + reason);
         return true;
     }
@@ -107,5 +129,32 @@ public Customer viewCustomerDetails(String customerId) {
         System.out.println("Report object created.");
     }
 }
+     public boolean insertAgent() {
+        String query = "INSERT INTO agents (agent_id, user_id, airline, commission_rate, access_level) VALUES (" 
+                        + agentId + ", " 
+                        + userID + ", '" 
+                        + airline + "', " 
+                        + commissionRate + ", " 
+                        + accessLevel + ")";
 
+        try (Connection conn = Database.connect(); 
+             Statement stmt = conn.createStatement()) {
+
+            int rowsAffected = stmt.executeUpdate(query);
+
+            if (rowsAffected > 0) {
+                System.out.println("Agent inserted successfully.");
+                return true;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("SQL Exception: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+     
+        
 }
+}
+
+

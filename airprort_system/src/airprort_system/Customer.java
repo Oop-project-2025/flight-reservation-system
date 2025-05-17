@@ -17,8 +17,9 @@ public class Customer extends User {
     }
     
     @Override
-    public void accessDashBoared(){};
-
+   public void accessDashBoared() {
+        System.out.println("Customer Dashboard Accessed");}
+   
     public Customer(String passportNumber, String frequentFlyerNumber, List<Booking> bookingHistory, Map<String, String> preferences, List<Payment> paymentMethods, String userID, String username, String email, String passwordHash, String role, int phoneNumber) {
         super(userID, username, email, passwordHash, role, phoneNumber);
         this.passportNumber = passportNumber;
@@ -103,6 +104,11 @@ public class Customer extends User {
     public void setPaymentMethods(List<Payment> paymentMethods) {
         this.paymentMethods = paymentMethods;
     }
+
+    String getId() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 
     
 

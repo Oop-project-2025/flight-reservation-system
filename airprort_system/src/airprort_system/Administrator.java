@@ -10,10 +10,11 @@ public class Administrator extends User {
     private List<String> permissions;
     
     @Override
-    public void accessDashBoared(){};
-
+    public void accessDashBoared() {
+        System.out.println("Administrator Dashboard Accessed");
+    }
     
-    public Administrator(String adminId, String department, List<String> permissions, String userID, String username, String email, String passwordHash, String role, int phoneNumber) {
+     public Administrator(String adminId, String department, List<String> permissions, String userID, String username, String email, String passwordHash, String role, int phoneNumber) {
         super(userID, username, email, passwordHash, role, phoneNumber);
         this.adminId = adminId;
         this.department = department;
@@ -22,29 +23,44 @@ public class Administrator extends User {
 
     
     public boolean addFlight(Flight flight) {
-        
-        System.out.println("Flight added: " + flight.getFlightNumber());
-        return true;
+        if (flight != null) {
+            System.out.println("Flight added: " + flight.getFlightNumber());
+            return true;
+        } else {
+            System.out.println("Error: Cannot add a null flight.");
+            return false;
+        }
     }
 
     public boolean removeFlight(String flightId) {
-        
-        System.out.println("Flight removed: " + flightId);
-        return true;
+        if (flightId != null && !flightId.isEmpty()) {
+            System.out.println("Flight removed: " + flightId);
+            return true;
+        } else {
+            System.out.println("Error: Invalid flight ID.");
+            return false;
+        }
     }
 
     public boolean updateFlightDetails(Flight flight) {
-        
-        System.out.println("Flight updated: " + flight.getFlightNumber());
-        return true;
+        if (flight != null) {
+            System.out.println("Flight updated: " + flight.getFlightNumber());
+            return true;
+        } else {
+            System.out.println("Error: Cannot update a null flight.");
+            return false;
+        }
     }
 
     public boolean manageUserAccounts(String userId, String action) {
-        
-        System.out.println("Action '" + action + "' applied to user ID: " + userId);
-        return true;
+        if (userId != null && !userId.isEmpty() && action != null && !action.isEmpty()) {
+            System.out.println("Action '" + action + "' applied to user ID: " + userId);
+            return true;
+        } else {
+            System.out.println("Error: Invalid user ID or action.");
+            return false;
+        }
     }
-
     public SystemReport generateSystemReport() {
         
         System.out.println("System report generated.");

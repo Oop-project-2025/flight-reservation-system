@@ -4,9 +4,11 @@ import static java.time.LocalDate.now;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class User {
-    private String userID;
+    String userID;
     private String username;
     private String email;
     private String passwordHash;
@@ -21,6 +23,13 @@ public abstract class User {
     private Boolean twoFactorAuthorization;
     private int loginAttempts;
     private int phoneNumber;
+    private Customer currentCustomer;
+    private List<String> blacklistedCustomers = new ArrayList<>();
+    private boolean isBlacklisted;
+    private String blackListID;
+    private String blacklistReason;
+
+
 
     public User(String userID, String username, String email, String passwordHash, String role, int phoneNumber) {
         this.userID = userID;
@@ -35,6 +44,30 @@ public abstract class User {
 
     public String getUserID() {
         return userID;
+    }
+
+    public int getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(int phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Customer getCurrentCustomer() {
+        return currentCustomer;
+    }
+
+    public void setCurrentCustomer(Customer currentCustomer) {
+        this.currentCustomer = currentCustomer;
+    }
+
+    public List<String> getBlacklistedCustomers() {
+        return blacklistedCustomers;
+    }
+
+    public void setBlacklistedCustomers(List<String> blacklistedCustomers) {
+        this.blacklistedCustomers = blacklistedCustomers;
     }
 
     public void setUserID(String userID) {
@@ -145,6 +178,28 @@ public abstract class User {
         this.loginAttempts = loginAttempts;
     }
     
+    public String getBlackListID() {
+    return blackListID;
+}
+
+    public String getBlacklistReason() {
+    return blacklistReason;
+}
+    
+    public void blacklistUser(String id, String reason) {
+    this.isBlacklisted = true;
+    this.blackListID = id;
+    this.blacklistReason = reason;
+}
+
+    public void removeFromBlacklist() {
+    this.isBlacklisted = false;
+    this.blackListID = null;
+    this.blacklistReason = null;
+}
+
+
+    
     public boolean login(String inputEmail,String passwordHash,String ip){
     if(this.email.equals(inputEmail) && this.passwordHash.equals(passwordHash))
     {
@@ -183,6 +238,12 @@ public abstract class User {
     }
      
     
+    public boolean isBlacklisted() {
+    if (currentCustomer == null) return false;
+    return blacklistedCustomers.contains(currentCustomer.getId());
+}
+
     
+
     
 }

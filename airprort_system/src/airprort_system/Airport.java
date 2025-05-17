@@ -27,7 +27,11 @@ public class Airport {
     }
 
     public void setAirportCode(String airportCode) {
-        this.airportCode = airportCode;
+        if (airportCode != null && !airportCode.isEmpty()) {
+            this.airportCode = airportCode;
+        } else {
+            System.out.println("Invalid airport code");
+        }
     }
 
     public String getName() {
@@ -79,17 +83,16 @@ public class Airport {
     }
     
     public void addFacilitys(String facility){
-    if(!facilities.contains(facility)){
-    facilities.add(facility);
-    }
+    if (facility != null && !facility.isEmpty() && !facilities.contains(facility)) {
+            facilities.add(facility);
+        }
     }
     
-    public boolean addTerminals(String terminal){
-    if(!terminals.contains(terminal)){
-    facilities.add(terminal);
-    
-         return true;
-    }
+     public boolean addTerminals(String terminal) {
+        if (terminal != null && !terminal.isEmpty() && !terminals.contains(terminal)) {
+            terminals.add(terminal); 
+            return true;
+        }
         return false;
     }
     
