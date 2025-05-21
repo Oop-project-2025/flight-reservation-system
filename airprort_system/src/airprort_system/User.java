@@ -9,11 +9,11 @@ import java.util.List;
 
 public abstract class User {
     String userID;
-    private String username;
-    private String email;
-    private String passwordHash;
+    String username;
+    String email;
+    String passwordHash;
     private String accountStatus;
-    private String role;
+    String role;
     private String address;
     private String lastLoginIP;
     private Date dateOfBirth;
