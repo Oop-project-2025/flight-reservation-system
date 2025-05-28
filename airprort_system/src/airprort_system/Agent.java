@@ -5,11 +5,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.sql.Connection;
+import java.sql.Connection; // Ensure this is java.sql.Connection
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
-
+import java.util.ArrayList; // Import ArrayList
 
 public class Agent extends User {
     private String agentId;
@@ -18,113 +18,68 @@ public class Agent extends User {
     private List<Booking> bookingsMade;
     private int accessLevel;
     
-   
-
-
-    
-
-    
    @Override
     public void accessDashBoared() {
         System.out.println("Agent Dashboard Accessed");
     }
 
+    // Constructor matching the User superclass constructor that takes address
+    public Agent(String agentId, String airline, double commissionRate, List<Booking> bookingsMade, int accessLevel, String userID, String username, String email, String passwordHash, String role, int phoneNumber, String address) {
+        super(userID, username, email, passwordHash, role, phoneNumber, address);
+        this.agentId = agentId;
+        this.airline = airline;
+        this.commissionRate = commissionRate;
+        this.bookingsMade = bookingsMade != null ? bookingsMade : new ArrayList<>();
+        this.accessLevel = accessLevel;
+    }
+
+    // Original constructor (ensure it calls super correctly)
     public Agent(String agentId, String airline, double commissionRate, List<Booking> bookingsMade, int accessLevel, String userID, String username, String email, String passwordHash, String role, int phoneNumber) {
         super(userID, username, email, passwordHash, role, phoneNumber);
         this.agentId = agentId;
         this.airline = airline;
         this.commissionRate = commissionRate;
-        this.bookingsMade = bookingsMade;
+        this.bookingsMade = bookingsMade != null ? bookingsMade : new ArrayList<>();
         this.accessLevel = accessLevel;
-        
-        
     }
+
+    // Original constructor that might have been used for database retrieval
+    // Note: This constructor doesn't pass all User fields to super, might lead to incomplete User objects
     public Agent(int agentId, int userID, String airline, double commissionRate, int accessLevel) {
-    super(String.valueOf(userID), "defaultUsername", "defaultEmail", "defaultPassword", "AGENT", 123456789);
-    this.agentId = String.valueOf(agentId);
-    this.airline = airline;
-    this.commissionRate = commissionRate;
-    this.accessLevel = accessLevel;
-}
-    
-    public boolean insertAgent() {
-    String checkUserQuery = "SELECT COUNT(*) FROM users WHERE user_id = " + super.getUserID();
-    String query = "INSERT INTO agents (agent_id, user_id, airline, commission_rate, access_level) VALUES (" 
-                    + agentId + ", " 
-                    + super.getUserID() + ", '" 
-                    + airline + "', " 
-                    + commissionRate + ", " 
-                    + accessLevel + ")";
+        super(String.valueOf(userID), "defaultUsername", "defaultEmail", "defaultPassword", "AGENT", 123456789);
+        this.agentId = String.valueOf(agentId);
+        this.airline = airline;
+        this.commissionRate = commissionRate;
+        this.accessLevel = accessLevel;
+        this.bookingsMade = new ArrayList<>(); // Initialize the list
+    }
 
-    try (Connection conn = DatabaseConnection.connect(); 
-         Statement stmt = conn.createStatement()) {
-
-        
-        ResultSet rs = stmt.executeQuery(checkUserQuery);
-        rs.next();
-        if (rs.getInt(1) == 0) {
-            System.err.println("User with ID " + super.getUserID() + " does not exist. Cannot insert agent.");
+    public boolean createBooking(Customer customer, Flight flight, List<Passengers> passengers, String seatClass) {
+        if (customer == null || flight == null || passengers == null || passengers.isEmpty() || seatClass == null || seatClass.isEmpty()) {
+            System.out.println("Error: Invalid booking details.");
             return false;
         }
+        // In a real system, this would interact with BookingSystem or BookingDatabaseManager
+        System.out.println("Booking created by agent for customer " + customer.getUsername() + " on flight " + flight.getFlightNumber());
+        return true;
+    }
 
-        // Insert the agent
-        int rowsAffected = stmt.executeUpdate(query);
-
-        if (rowsAffected > 0) {
-            System.out.println("Agent inserted successfully.");
-            return true;
+    public boolean updateBookingStatus(Booking booking, String newStatus) {
+        if (booking == null || newStatus == null || newStatus.isEmpty()) {
+            System.out.println("Error: Invalid booking or status.");
+            return false;
         }
-
-    } catch (SQLException e) {
-        System.err.println("SQL Exception: " + e.getMessage());
+        booking.setBookingStatus(newStatus);
+        System.out.println("Booking " + booking.getBookingID() + " status updated to: " + newStatus);
+        return true;
     }
 
-    return false;
-}
-
-       
-
-    
-    
-    
-    
-      public Booking createBookingForCustomer(Customer customer, Flight flight, List<Passengers> passengers) {
-        if (customer == null || flight == null || passengers == null || passengers.isEmpty()) {
-            System.out.println("Error: Invalid booking parameters.");
-            return null;
-        }
-        Booking booking = new Booking();
-        System.out.println("Booking created by agent for customer: " + customer.getUsername());
-        bookingsMade.add(booking);
-        return booking;
-    }
-    public Report generateBookingReport(Date startDate, Date endDate) {
-        if (startDate == null || endDate == null || endDate.before(startDate)) {
-            System.out.println("Error: Invalid date range for report.");
-            return null; 
-        }
-        System.out.println("Generated booking report from " + startDate + " to " + endDate);
-        return new Report();
-    }
-
-    private Map<String, Customer> customerMap = new HashMap<>();
-
-public Customer viewCustomerDetails(String customerId) {
-    System.out.println("Fetching details for customer ID: " + customerId);
-    return customerMap.get(customerId);
-}
-
-
-    public Report generateReport(Date startDate, Date endDate) {
-        System.out.println("Generating report from " + startDate + " to " + endDate);
-        return new Report();
-    }
-
-   public boolean applyDiscount(Booking booking, double discountAmount) {
+    public boolean applyDiscount(Booking booking, double discountAmount) {
         if (booking == null || discountAmount <= 0) {
             System.out.println("Error: Invalid booking or discount amount.");
             return false;
         }
+        booking.setTotalPrice(booking.getTotalPrice() - discountAmount);
         System.out.println("Applied discount of " + discountAmount + " to booking: " + booking.getBookingID());
         return true;
     }
@@ -136,6 +91,12 @@ public Customer viewCustomerDetails(String customerId) {
         }
         System.out.println("Customer " + customer.getUsername() + " blocked. Reason: " + reason);
         return true;
+    }
+
+    // FIX: Changed access modifier to public to match User superclass
+    @Override
+    public String getUsername() {
+        return super.getUsername(); // Call superclass method
     }
 
     public String getAgentId() {
@@ -178,17 +139,10 @@ public Customer viewCustomerDetails(String customerId) {
         this.accessLevel = accessLevel;
     }
 
+    // Nested class Report
     class Report {
-    
-    public Report() {
-        System.out.println("Report object created.");
+        public Report() {
+            System.out.println("Report object created.");
+        }
     }
-
-    
-
-   
 }
-        
-}
-
-
