@@ -1905,71 +1905,71 @@ private void insertSimpleNotification(String userId, String message, String type
 }
     
     private void generateBookingReport() {
-        String bookingId = reportBookingIdFilter.getText().trim();
-        String customerId = reportCustomerIdFilter.getText().trim();
-        String flightId = reportFlightIdFilter.getText().trim();
-        Date startDate = (Date) reportStartDateSpinner.getValue();
-        Date endDate = (Date) reportEndDateSpinner.getValue();
-        reportResultsTableModel.setRowCount(0);
+    String bookingId = reportBookingIdFilter.getText().trim();
+    String customerId = reportCustomerIdFilter.getText().trim();
+    String flightId = reportFlightIdFilter.getText().trim();
+    Date startDate = (Date) reportStartDateSpinner.getValue();
+    Date endDate = (Date) reportEndDateSpinner.getValue();
+    reportResultsTableModel.setRowCount(0);
 
-        StringBuilder sqlBuilder = new StringBuilder("SELECT b.booking_id, b.customer_id, b.flight_id, b.booking_date, b.seat_class, b.total_price, b.payment_status, p.applied_by as agent_id " +
-                                                   "FROM booking b LEFT JOIN payment p ON b.booking_id = p.booking_id WHERE 1=1 "); 
-        List<Object> params = new ArrayList<>();
+    // Updated SQL to match exact schema - removed payment join as it's not needed for basic booking info
+    StringBuilder sqlBuilder = new StringBuilder("SELECT booking_id, customer_id, flight_id, booking_date, seat_class, total_price, payment_status, special_requests " +
+                                               "FROM booking WHERE 1=1 "); 
+    List<Object> params = new ArrayList<>();
 
-        if (!bookingId.isEmpty()) {
-            sqlBuilder.append(" AND b.booking_id LIKE ?");
-            params.add("%" + bookingId + "%");
-        }
-        if (!customerId.isEmpty()) {
-            sqlBuilder.append(" AND b.customer_id LIKE ?");
-            params.add("%" + customerId + "%");
-        }
-        if (!flightId.isEmpty()) {
-            sqlBuilder.append(" AND b.flight_id LIKE ?");
-            params.add("%" + flightId + "%");
-        }
-        if (startDate != null) {
-            sqlBuilder.append(" AND b.booking_date >= ?");
-            params.add(new Timestamp(startDate.getTime()));
-        }
-        if (endDate != null) {
-            
-            long oneDay = 24 * 60 * 60 * 1000;
-            sqlBuilder.append(" AND b.booking_date < ?");
-            params.add(new Timestamp(endDate.getTime() + oneDay));
-        }
-        sqlBuilder.append(" ORDER BY b.booking_date DESC");
-
-        Connection conn = DatabaseConnection.connect();
-        if (conn == null) return;
-
-        try (PreparedStatement pstmt = conn.prepareStatement(sqlBuilder.toString())) {
-            for (int i = 0; i < params.size(); i++) {
-                pstmt.setObject(i + 1, params.get(i));
-            }
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                Vector<Object> row = new Vector<>();
-                row.add(rs.getString("booking_id"));
-                row.add(rs.getString("customer_id"));
-                row.add(rs.getString("flight_id"));
-                row.add(rs.getTimestamp("booking_date"));
-                row.add(rs.getString("seat_class"));
-                row.add(String.format("%.2f", rs.getDouble("total_price")));
-                row.add(rs.getString("payment_status"));
-                row.add(rs.getString("agent_id") != null ? rs.getString("agent_id") : "N/A"); 
-                reportResultsTableModel.addRow(row);
-            }
-            if (reportResultsTableModel.getRowCount() == 0) {
-                JOptionPane.showMessageDialog(this, "No bookings found matching the criteria.", "Report Results", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error generating report: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace();
-        } finally {
-            closeConnection(conn);
-        }
+    if (!bookingId.isEmpty()) {
+        sqlBuilder.append(" AND booking_id LIKE ?");
+        params.add("%" + bookingId + "%");
     }
+    if (!customerId.isEmpty()) {
+        sqlBuilder.append(" AND customer_id LIKE ?");
+        params.add("%" + customerId + "%");
+    }
+    if (!flightId.isEmpty()) {
+        sqlBuilder.append(" AND flight_id LIKE ?");
+        params.add("%" + flightId + "%");
+    }
+    if (startDate != null) {
+        sqlBuilder.append(" AND booking_date >= ?");
+        params.add(new Timestamp(startDate.getTime()));
+    }
+    if (endDate != null) {
+        long oneDay = 24 * 60 * 60 * 1000;
+        sqlBuilder.append(" AND booking_date < ?");
+        params.add(new Timestamp(endDate.getTime() + oneDay));
+    }
+    sqlBuilder.append(" ORDER BY booking_date DESC");
+
+    Connection conn = DatabaseConnection.connect();
+    if (conn == null) return;
+
+    try (PreparedStatement pstmt = conn.prepareStatement(sqlBuilder.toString())) {
+        for (int i = 0; i < params.size(); i++) {
+            pstmt.setObject(i + 1, params.get(i));
+        }
+        ResultSet rs = pstmt.executeQuery();
+        while (rs.next()) {
+            Vector<Object> row = new Vector<>();
+            row.add(rs.getString("booking_id"));
+            row.add(rs.getString("customer_id"));
+            row.add(rs.getString("flight_id"));
+            row.add(rs.getTimestamp("booking_date"));
+            row.add(rs.getString("seat_class"));
+            row.add(String.format("%.2f", rs.getDouble("total_price")));
+            row.add(rs.getString("payment_status"));
+            row.add(rs.getString("special_requests")); // Added special_requests from schema
+            reportResultsTableModel.addRow(row);
+        }
+        if (reportResultsTableModel.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "No bookings found matching the criteria.", "Report Results", JOptionPane.INFORMATION_MESSAGE);
+        }
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(this, "Error generating report: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        ex.printStackTrace();
+    } finally {
+        closeConnection(conn);
+    }
+}
 
     private void exportReportToTxt() {
         if (reportResultsTableModel.getRowCount() == 0) {
@@ -2186,14 +2186,13 @@ private void insertSimpleNotification(String userId, String message, String type
             }
 
             
-            String insertDiscountSql = "INSERT INTO discounts (discount_id, booking_id, discount_type, discount_value, reason, applied_by, applied_at) VALUES (?, ?, ?, ?, ?, ?, NOW())";
+            String insertDiscountSql = "INSERT INTO discounts (discount_id, booking_id, discount_type, discount_value, reason) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement pstmtInsert = conn.prepareStatement(insertDiscountSql)) {
                 pstmtInsert.setString(1, discountId);
                 pstmtInsert.setString(2, currentBookingIdForDiscount);
                 pstmtInsert.setString(3, discountType);
                 pstmtInsert.setDouble(4, discountValue);
                 pstmtInsert.setString(5, reason);
-                pstmtInsert.setString(6, currentAgentId); 
                 pstmtInsert.executeUpdate();
             }
 
