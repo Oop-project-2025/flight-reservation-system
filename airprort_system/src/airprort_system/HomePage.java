@@ -62,7 +62,7 @@ public class HomePage extends JPanel {
         contentPanel.setOpaque(false); // Make it transparent to show background
         
         // Title Label
-        JLabel titleLabel = new JLabel("Jupiter Airways");
+        JLabel titleLabel = new JLabel("Your Gateway to Jupiter ");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 48));
         titleLabel.setForeground(new Color(255, 255, 255, 220)); // Slightly transparent white
         

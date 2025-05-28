@@ -7,7 +7,7 @@ import java.net.URL;
 public class FlightReservationSystem {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Your Gateway to Jupiter");
+            JFrame frame = new JFrame("Jupiter Airways");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(1000, 700);
             frame.setLocationRelativeTo(null);
@@ -25,7 +25,7 @@ public class FlightReservationSystem {
 
             Image backgroundImage = null;
             try {
-                URL imageUrl = FlightReservationSystem.class.getResource("kk.jfif.jpg");
+                URL imageUrl = FlightReservationSystem.class.getResource("kk.jfif");
                 if (imageUrl != null) {
                     backgroundImage = new ImageIcon(imageUrl).getImage();
                 } else {

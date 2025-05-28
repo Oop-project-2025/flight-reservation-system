@@ -1747,19 +1747,18 @@ if (currentAnomalyCount >= DEEPFAKE_THRESHOLD_ANOMALY_COUNT) {
 }
 
    
-    private void viewTicket() {
-        int selectedRow = myBookingsTable.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a booking to view the ticket.", "No Booking Selected", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        String bookingId = (String) myBookingsTableModel.getValueAt(selectedRow, 0);
-        viewTicket(bookingId); 
+   private void viewTicket() {
+    int selectedRow = myBookingsTable.getSelectedRow();
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Please select a booking to view the ticket.", "No Booking Selected", JOptionPane.WARNING_MESSAGE);
+        return;
     }
 
-    
-  private void viewTicket(String bookingId) {
+    String bookingId = (String) myBookingsTableModel.getValueAt(selectedRow, 0);
+    viewTicket(bookingId);
+}
+
+private void viewTicket(String bookingId) {
     Connection conn = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;
@@ -1769,144 +1768,127 @@ if (currentAnomalyCount >= DEEPFAKE_THRESHOLD_ANOMALY_COUNT) {
         if (conn == null) return;
 
         String sql = "SELECT t.ticket_id, t.seat_number, t.boarding_time, t.gate_number, t.ticket_status, t.barcode, " +
-                     "p.first_name, p.last_name, p.passport_number, " +
-                     "f.flight_num, da.airport_code AS departure_code, da.name AS departure_name, da.city AS departure_city, " +
-                     "aa.airport_code AS arrival_code, aa.name AS arrival_name, aa.city AS arrival_city, " +
-                     "f.departure_time, f.arrival_time, f.aircraft_type, " +
-                     "b.seat_class, b.booking_date " +
-                     "FROM ticket t " +
-                     "JOIN booking b ON t.booking_id = b.booking_id " +
-                     "JOIN passenger p ON t.passenger_id = p.passenger_id " +
-                     "JOIN flight f ON b.flight_id = f.flight_id " +
-                     "JOIN airport da ON f.departure_airport_id = da.airport_code " +
-                     "JOIN airport aa ON f.arrival_airport_id = aa.airport_code " +
-                     "WHERE t.booking_id = ?";
+                "p.first_name, p.last_name, p.passport_number, " +
+                "f.flight_num, da.airport_code AS departure_code, da.name AS departure_name, da.city AS departure_city, " +
+                "aa.airport_code AS arrival_code, aa.name AS arrival_name, aa.city AS arrival_city, " +
+                "f.departure_time, f.arrival_time, f.aircraft_type, " +
+                "b.seat_class, b.booking_date " +
+                "FROM ticket t " +
+                "JOIN booking b ON t.booking_id = b.booking_id " +
+                "JOIN passenger p ON t.passenger_id = p.passenger_id " +
+                "JOIN flight f ON b.flight_id = f.flight_id " +
+                "JOIN airport da ON f.departure_airport_id = da.airport_code " +
+                "JOIN airport aa ON f.arrival_airport_id = aa.airport_code " +
+                "WHERE t.booking_id = ?";
         pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, bookingId);
         rs = pstmt.executeQuery();
 
         if (rs.next()) {
-            
             JPanel ticketPanel = new JPanel(new BorderLayout());
             ticketPanel.setBackground(new Color(245, 245, 245));
             ticketPanel.setBorder(BorderFactory.createCompoundBorder(
-               BorderFactory.createLineBorder(new Color(200, 200, 200)),
-    BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+                    BorderFactory.createLineBorder(new Color(200, 200, 200)),
+                    BorderFactory.createEmptyBorder(20, 20, 20, 20)));
             ticketPanel.setPreferredSize(new Dimension(700, 400));
 
-            
             JPanel headerPanel = new GradientPanel(new Color(30, 30, 30), new Color(70, 70, 70));
             headerPanel.setLayout(new BorderLayout());
             headerPanel.setBorder(BorderFactory.createEmptyBorder(15, 25, 15, 25));
-            
-            
+
             JPanel logoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
             logoPanel.setOpaque(false);
-            
-            
+
             try {
                 ImageIcon logoIcon = new ImageIcon("premium_logo.png");
                 Image logoImage = logoIcon.getImage().getScaledInstance(120, 60, Image.SCALE_SMOOTH);
                 JLabel logoLabel = new JLabel(new ImageIcon(logoImage));
                 logoPanel.add(logoLabel);
             } catch (Exception e) {
-                
                 JLabel logoLabel = new JLabel("SKYLINE PREMIUM");
                 logoLabel.setFont(new Font("Montserrat", Font.BOLD, 24));
-                logoLabel.setForeground(new Color(255, 215, 0)); 
+                logoLabel.setForeground(new Color(255, 215, 0));
                 logoPanel.add(logoLabel);
             }
-            
-            
+
             JLabel boardingLabel = new JLabel("BOARDING PASS");
             boardingLabel.setFont(new Font("Montserrat", Font.BOLD, 28));
             boardingLabel.setForeground(Color.WHITE);
             boardingLabel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 0));
-            
+
             JPanel headerRight = new JPanel(new BorderLayout());
             headerRight.setOpaque(false);
-            
-            
-            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM dd yyyy");
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM dd");
             Date departureTime = rs.getTimestamp("departure_time");
-            
+
             JLabel flightLabel = new JLabel("FLIGHT " + rs.getString("flight_num") + " | " + dateFormat.format(departureTime));
             flightLabel.setFont(new Font("Montserrat", Font.PLAIN, 14));
             flightLabel.setForeground(new Color(200, 200, 200));
             flightLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-            
+
             headerRight.add(boardingLabel, BorderLayout.CENTER);
             headerRight.add(flightLabel, BorderLayout.SOUTH);
-            
+
             headerPanel.add(logoPanel, BorderLayout.WEST);
             headerPanel.add(headerRight, BorderLayout.CENTER);
-            
+
             ticketPanel.add(headerPanel, BorderLayout.NORTH);
 
-            
             JPanel mainContent = new JPanel(new GridLayout(1, 2, 0, 0));
-            
-            
+
             JPanel leftPanel = new JPanel(new BorderLayout());
             leftPanel.setBackground(Color.WHITE);
             leftPanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
-            
-            
+
             JLabel nameLabel = new JLabel(rs.getString("first_name") + " " + rs.getString("last_name"));
             nameLabel.setFont(new Font("Montserrat", Font.BOLD, 28));
             nameLabel.setForeground(new Color(50, 50, 50));
             nameLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
-            
-            
+
             JPanel routePanel = new JPanel(new GridLayout(2, 1, 0, 15));
             routePanel.setOpaque(false);
-            
-            
-            JPanel departurePanel = createRoutePanel("✈️ DEPARTURE", 
-                rs.getString("departure_code"), 
-                rs.getString("departure_city"), 
-                rs.getTimestamp("departure_time"));
-            
-            
-            JPanel arrivalPanel = createRoutePanel("🛬 ARRIVAL", 
-                rs.getString("arrival_code"), 
-                rs.getString("arrival_city"), 
-                rs.getTimestamp("arrival_time"));
-            
+
+            JPanel departurePanel = createRoutePanel("✈️ DEPARTURE",
+                    rs.getString("departure_code"),
+                    rs.getString("departure_city"),
+                    rs.getTimestamp("departure_time"));
+
+            JPanel arrivalPanel = createRoutePanel("🛬 ARRIVAL",
+                    rs.getString("arrival_code"),
+                    rs.getString("arrival_city"),
+                    rs.getTimestamp("arrival_time"));
+
             routePanel.add(departurePanel);
             routePanel.add(arrivalPanel);
-            
+
             leftPanel.add(nameLabel, BorderLayout.NORTH);
             leftPanel.add(routePanel, BorderLayout.CENTER);
-            
-            
+
             JPanel rightPanel = new GradientPanel(new Color(40, 40, 40), new Color(70, 70, 70));
             rightPanel.setLayout(new BorderLayout());
             rightPanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
-            
-            
+
             JPanel detailsPanel = new JPanel(new GridLayout(0, 1, 0, 15));
             detailsPanel.setOpaque(false);
-            
+
             addPremiumDetail(detailsPanel, "SEAT", rs.getString("seat_number"), "💺");
             addPremiumDetail(detailsPanel, "CLASS", rs.getString("seat_class"), "✨");
             addPremiumDetail(detailsPanel, "GATE", rs.getString("gate_number"), "🚪");
-            addPremiumDetail(detailsPanel, "BOARDING", 
-                new SimpleDateFormat("HH:mm").format(rs.getTimestamp("boarding_time")), "⏱️");
+            addPremiumDetail(detailsPanel, "BOARDING",
+                    new SimpleDateFormat("HH:mm").format(rs.getTimestamp("boarding_time")), "⏱️");
             addPremiumDetail(detailsPanel, "AIRCRAFT", rs.getString("aircraft_type"), "✈️");
             addPremiumDetail(detailsPanel, "TICKET", rs.getString("ticket_id"), "🎫");
-            
-            
+
             JPanel codePanel = new JPanel(new BorderLayout(0, 10));
             codePanel.setOpaque(false);
-            
-            
+
             JPanel barcodeContainer = new JPanel(new BorderLayout());
             barcodeContainer.setBackground(new Color(60, 60, 60));
             barcodeContainer.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(100, 100, 100)),
-                BorderFactory.createEmptyBorder(15, 15, 15, 15)));
-            
+                    BorderFactory.createLineBorder(new Color(100, 100, 100)),
+                    BorderFactory.createEmptyBorder(15, 15, 15, 15)));
+
             JPanel barcodeLines = new JPanel(new GridLayout(1, 0, 1, 0));
             barcodeLines.setBackground(new Color(60, 60, 60));
             Random rand = new Random();
@@ -1917,71 +1899,70 @@ if (currentAnomalyCount >= DEEPFAKE_THRESHOLD_ANOMALY_COUNT) {
                 line.setBackground(new Color(220, 220, 220));
                 barcodeLines.add(line);
             }
-            
+
             JLabel barcodeLabel = new JLabel(rs.getString("barcode"), SwingConstants.CENTER);
             barcodeLabel.setFont(new Font("Montserrat", Font.BOLD, 12));
             barcodeLabel.setForeground(new Color(200, 200, 200));
-            
+
             barcodeContainer.add(barcodeLines, BorderLayout.CENTER);
             barcodeContainer.add(barcodeLabel, BorderLayout.SOUTH);
-            
+
             codePanel.add(new JLabel("SCAN AT GATE", SwingConstants.CENTER), BorderLayout.NORTH);
             codePanel.add(barcodeContainer, BorderLayout.CENTER);
-            
+
             rightPanel.add(detailsPanel, BorderLayout.CENTER);
             rightPanel.add(codePanel, BorderLayout.SOUTH);
-            
+
             mainContent.add(leftPanel);
             mainContent.add(rightPanel);
-            
+
             ticketPanel.add(mainContent, BorderLayout.CENTER);
-            
-            
+
             JPanel footerPanel = new JPanel(new BorderLayout());
             footerPanel.setBackground(new Color(245, 245, 245));
             footerPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
-            
-            
+
             JSeparator divider = new JSeparator();
             divider.setForeground(new Color(200, 200, 200));
-            
-            
+
             JLabel termsLabel = new JLabel("<html><div style='text-align: center; color: #666666; font-size: 10px;'>"
-                + "PLEASE ARRIVE AT THE GATE AT LEAST 30 MINUTES BEFORE DEPARTURE<br>"
-                + "VALID GOVERNMENT PHOTO ID REQUIRED • BAGGAGE POLICY APPLIES</div></html>");
+                    + "PLEASE ARRIVE AT THE GATE AT LEAST 30 MINUTES BEFORE DEPARTURE<br>"
+                    + "VALID GOVERNMENT PHOTO ID REQUIRED • BAGGAGE POLICY APPLIES</div></html>");
             termsLabel.setFont(new Font("Montserrat", Font.PLAIN, 10));
-            
+
             footerPanel.add(divider, BorderLayout.NORTH);
             footerPanel.add(termsLabel, BorderLayout.CENTER);
-            
+
+            JLabel companyNameLabel = new JLabel("JUPITER AIRWAYS", SwingConstants.LEFT);
+            companyNameLabel.setFont(new Font("Segoe UI Black", Font.BOLD, 14));
+            companyNameLabel.setForeground(new Color(255, 140, 0));
+            companyNameLabel.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 0));
+
+            footerPanel.add(companyNameLabel, BorderLayout.WEST);
+
             ticketPanel.add(footerPanel, BorderLayout.SOUTH);
 
-            
             JDialog ticketDialog = new JDialog();
             ticketDialog.setTitle("Premium Boarding Pass - " + rs.getString("flight_num"));
             ticketDialog.setModal(true);
-            
-            
-            ((JComponent)ticketDialog.getContentPane()).setBorder(
-                BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            
+
+            ((JComponent) ticketDialog.getContentPane()).setBorder(
+                    BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
             ticketDialog.add(ticketPanel);
             ticketDialog.pack();
             ticketDialog.setLocationRelativeTo(this);
-            
-            
-            
-            
+
             ticketDialog.setVisible(true);
         } else {
-            JOptionPane.showMessageDialog(this, 
-                "Ticket not found for booking ID: " + bookingId, 
-                "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Ticket not found for booking ID: " + bookingId,
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
     } catch (SQLException ex) {
-        JOptionPane.showMessageDialog(this, 
-            "Error viewing ticket: " + ex.getMessage(), 
-            "Database Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this,
+                "Error viewing ticket: " + ex.getMessage(),
+                "Database Error", JOptionPane.ERROR_MESSAGE);
         ex.printStackTrace();
     } finally {
         try {
@@ -1993,7 +1974,6 @@ if (currentAnomalyCount >= DEEPFAKE_THRESHOLD_ANOMALY_COUNT) {
         }
     }
 }
-
 
 private JPanel createRoutePanel(String label, String airportCode, String city, Timestamp time) {
     JPanel panel = new JPanel(new BorderLayout());
