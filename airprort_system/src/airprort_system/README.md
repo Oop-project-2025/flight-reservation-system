@@ -118,15 +118,6 @@ Launch the GUI through the main file or build script
 
 
 
-
-
----
-
-Screenshots
-
-
-
-
 ---
 
 Future Improvements
@@ -147,5 +138,7 @@ Authors
 
 [Omar Yousef Shaban]
 [Yousef Ahmed Karem]
-[Adham]
+[Adham Mamdouh Eid]
+[Omar Khaled Abd-Elazim]
+[Karim Mohamed Darwish]
 

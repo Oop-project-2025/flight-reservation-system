@@ -3,9 +3,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import airprort_system.Agent;
+import java.sql.PreparedStatement;
 
 public class DatabaseConnection {
-    private static final String URL = "jdbc:mysql://127.0.0.1:3306/airport?zeroDateTimeBehavior=CONVERT_TO_NULL";
+    private static final String URL = "jdbc:mysql://127.0.0.1:3306/flight_reservation_system?zeroDateTimeBehavior=CONVERT_TO_NULL";
     private static final String USER = "root";
     private static final String PASSWORD = "oqwe321asd";
 
@@ -26,13 +27,12 @@ public class DatabaseConnection {
     public static void main(String[] args) {
       
     
+    
         
-        Agent agent1 = new Agent(1, 101, "Delta Airlines", 15.5, 2);
-        Agent agent2 = new Agent(2, 102, "Qatar Airways", 12.0, 1);
+        
 
         
-        agent1.insertAgent();
-        agent2.insertAgent();
+       
     }
 }
 
