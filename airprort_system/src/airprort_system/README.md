@@ -57,7 +57,7 @@ Programming Language: [Java (Oop)]
 
 Database: MySQL
 
-GUI Framework: [JavaFX, Swing.]
+GUI Framework: [Swing.]
 
 Tools: UML diagrams for class structure, File handling for backup and export
 
@@ -75,8 +75,6 @@ Core classes: Flight, Booking, Passenger, Payment, Ticket, Airport
 
 Utility/Support classes: FileManager, WaitList, BlackList, DeepFakeUser, BookingSystem
 
-
-[Insert image previews or links to the diagrams if available]
 
 
 ---
